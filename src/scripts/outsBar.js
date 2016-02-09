@@ -2,9 +2,8 @@
  * Created by bdilday on 2/1/16.
  */
 
-
 var React = require('react');
-var constants = require('./constants');
+var rd3 = require('react-d3');
 
 module.exports = React.createClass({
 
@@ -12,9 +11,8 @@ module.exports = React.createClass({
         fill: React.PropTypes.string,
         width: React.PropTypes.number,
         height: React.PropTypes.number,
-        rotate: React.PropTypes.number,
-        x: React.PropTypes.number,
-        y: React.PropTypes.number,
+        offsetx: React.PropTypes.number,
+        offsety: React.PropTypes.number,
         className: React.PropTypes.string
     },
 
@@ -26,24 +24,19 @@ module.exports = React.createClass({
     },
 
     render() {
-        var x = parseInt(constants.locationMap[this.props.loc].x*127*this.props.pixelsPerFoot);
-        var y = parseInt(constants.locationMap[this.props.loc].y*127*this.props.pixelsPerFoot);
-
-        var sz = this.props.pixelsPerFoot*constants.baseSizeInFeet*4;
-
-        var sx = (x + 0.5*sz).toString();
-        var sy = (y + 0.5*sz).toString();
-        var t = 'rotate(45 ' + sx + ' ' + sy + ')';
-        var baseSizeInFeet = 1.25;
+        var x = (this.props.barwidth+this.props.barbuffer)*parseInt(this.props.loc) + this.props.barbuffer;
+        var y = -this.props.barheight ;
+        console.log('outsBar', this.props, x, y);
+        var t = 'translate( ' + this.props.offsetx + ' ' + this.props.offsety + ')';
 
         return (
             <rect
-                className='rect-as-base'
+                className='outs-bar'
                 {...this.props}
                 fill={this.props.fill}
                 transform={t}
-                width={sz}
-                height={sz}
+                width={this.props.barwidth}
+                height={this.props.barheight}
                 x={x}
                 y={y}
                 onMouseOver={this.props.handleMouseOver}

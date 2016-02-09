@@ -1,62 +1,54 @@
 
 var React = window.React = require('react');
-
 var Base = require('./base');
+var d3 = require('d3');
+var _ = require('lodash');
 
 var BasesDiamond = React.createClass({
 
     render: function() {
+        var lumscale = d3.scale.linear().range([1,0]).domain([0,1]);
+        console.log('basesData', this.props.basesData);
+        console.log('man1', this.props.basesData['man1']);
+        var data = this.props.basesData;
+
+        var fills = _.map(['man1', 'man1', 'man2', 'man3'], function(d) {
+            console.log(d, data[d]);
+            return d3.hsl(
+                200, 0.42, lumscale(data[d])
+                ).toString();
+        });
+
+        fills[0] = d3.hsl(200, 0.42, 0).toString();
+
+        console.log('fills', fills);
+
         var tr = 'translate( ' + this.props.offsetx + ' ' + this.props.offsety + ' )';
-        return <div>
-            <svg width={this.props.svgw} height={this.props.svgh}>
-                <g transform={tr}>
-
+        return <g>
                     <Base
-                        width={10}
-                        height={10}
-                        fill={'#3182bd'}
-                        strokeWidth={2}
-                        stroke={'red'}
-                        rotate={45}
-                        x={64}
-                        y={0}
+                        loc={'top'}
+                        fill={fills[2]}
+                        {...this.props}
                         />
 
                     <Base
-                        width={10}
-                        height={10}
-                        fill={'#3182bd'}
-                        strokeWidth={2}
-                        stroke={'red'}
-                        rotate={45}
-                        x={0}
-                        y={64}
+                        loc={'right'}
+                        fill={fills[1]}
+                        {...this.props}
                         />
 
                     <Base
-                        width={10}
-                        height={10}
-                        fill={'#3182bd'}
-                        strokeWidth={2}
-                        stroke={'red'}
-                        rotate={45}
-                        x={128}
-                        y={64}
+                        loc={'bottom'}
+                        fill={fills[0]}
+                        {...this.props}
                         />
 
                     <Base
-                        width={10}
-                        height={10}
-                        fill={'#3182bd'}
-                        strokeWidth={2}
-                        stroke={'red'}
-                        rotate={45}
-                        x={64}
-                        y={128}
+                        loc={'left'}
+                        fill={fills[3]}
+                        {...this.props}
                         />
-    </g>
-</svg>
-        </div>;
+        </g>;
     }
 });
 

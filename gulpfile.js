@@ -9,7 +9,7 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var source = require('vinyl-source-stream'),
 
-    sourceFile = './app/scripts/app.js',
+    sourceFile = './src/scripts/app.js',
 
     destFolder = './dist/scripts',
     destFileName = 'app.js';
@@ -23,15 +23,15 @@ gulp.task('styles', ['sass', 'moveCss']);
 gulp.task('moveCss',['clean'], function(){
   // the base option sets the relative root for the set of files,
   // preserving the folder structure
-  gulp.src(['./app/styles/**/*.css'], { base: './app/styles/' })
+  gulp.src(['./src/styles/**/*.css'], { base: './src/styles/' })
   .pipe(gulp.dest('dist/styles'));
 });
 
 gulp.task('sass', function() {
-    return $.rubySass('./app/styles', {
+    return $.rubySass('./src/styles', {
             style: 'expanded',
             precision: 10,
-            loadPath: ['app/bower_components']
+            loadPath: ['src/bower_components']
         })
         .pipe($.autoprefixer('last 1 version'))
         .pipe(gulp.dest('dist/styles'))
@@ -77,7 +77,7 @@ gulp.task('buildScripts', function() {
 
 
 gulp.task('jade', function() {
-    return gulp.src('app/template/*.jade')
+    return gulp.src('src/template/*.jade')
         .pipe($.jade({
             pretty: true
         }))
@@ -88,7 +88,7 @@ gulp.task('jade', function() {
 
 // HTML
 gulp.task('html', function() {
-    return gulp.src('app/*.html')
+    return gulp.src('src/*.html')
         .pipe($.useref())
         .pipe(gulp.dest('dist'))
         .pipe($.size());
@@ -96,7 +96,7 @@ gulp.task('html', function() {
 
 // Images
 gulp.task('images', function() {
-    return gulp.src('app/images/**/*')
+    return gulp.src('src/images/**/*')
         .pipe($.cache($.imagemin({
             optimizationLevel: 3,
             progressive: true,
@@ -111,7 +111,7 @@ gulp.task('fonts', function() {
 
     return gulp.src(require('main-bower-files')({
             filter: '**/*.{eot,svg,ttf,woff,woff2}'
-        }).concat('app/fonts/**/*'))
+        }).concat('src/fonts/**/*'))
         .pipe(gulp.dest('dist/fonts'));
 
 });
@@ -124,7 +124,7 @@ gulp.task('clean', function(cb) {
 
 // Bundle
 gulp.task('bundle', ['styles', 'scripts', 'bower'], function() {
-    return gulp.src('./app/*.html')
+    return gulp.src('./src/*.html')
         .pipe($.useref.assets())
         .pipe($.useref.restore())
         .pipe($.useref())
@@ -132,7 +132,7 @@ gulp.task('bundle', ['styles', 'scripts', 'bower'], function() {
 });
 
 gulp.task('buildBundle', ['styles', 'buildScripts', 'moveLibraries', 'bower'], function() {
-    return gulp.src('./app/*.html')
+    return gulp.src('./src/*.html')
         .pipe($.useref.assets())
         .pipe($.useref.restore())
         .pipe($.useref())
@@ -143,30 +143,30 @@ gulp.task('buildBundle', ['styles', 'buildScripts', 'moveLibraries', 'bower'], f
 gulp.task('moveLibraries',['clean'], function(){
   // the base option sets the relative root for the set of files,
   // preserving the folder structure
-  gulp.src(['./app/scripts/**/*.js'], { base: './app/scripts/' })
+  gulp.src(['./src/scripts/**/*.js'], { base: './src/scripts/' })
   .pipe(gulp.dest('dist/scripts'));
 });
 
 
 // Bower helper
 gulp.task('bower', function() {
-    gulp.src('app/bower_components/**/*.js', {
-            base: 'app/bower_components'
+    gulp.src('src/bower_components/**/*.js', {
+            base: 'src/bower_components'
         })
         .pipe(gulp.dest('dist/bower_components/'));
 
 });
 
 gulp.task('json', function() {
-    gulp.src('app/scripts/json/**/*.json', {
-            base: 'app/scripts'
+    gulp.src('src/scripts/json/**/*.json', {
+            base: 'src/scripts'
         })
         .pipe(gulp.dest('dist/scripts/'));
 });
 
 // Robots.txt and favicon.ico
 gulp.task('extras', function() {
-    return gulp.src(['app/*.txt', 'app/*.ico'])
+    return gulp.src(['src/*.txt', 'src/*.ico'])
         .pipe(gulp.dest('dist/'))
         .pipe($.size());
 });
@@ -181,24 +181,24 @@ gulp.task('watch', ['html', 'fonts', 'bundle'], function() {
         // Note: this uses an unsigned certificate which on first access
         //       will present a certificate warning in the browser.
         // https: true,
-        server: ['dist']
+        server: ['dist', 'src']
     });
 
     // Watch .json files
-    gulp.watch('app/scripts/**/*.json', ['json']);
+    gulp.watch('src/scripts/**/*.json', ['json']);
 
     // Watch .html files
-    gulp.watch('app/*.html', ['html']);
+    gulp.watch('src/*.html', ['html']);
 
-    gulp.watch(['app/styles/**/*.scss', 'app/styles/**/*.css'], ['styles', 'scripts', reload]);
+    gulp.watch(['src/styles/**/*.scss', 'src/styles/**/*.css'], ['styles', 'scripts', reload]);
 
 
         // Watch .jade files
-        gulp.watch('app/template/**/*.jade', ['jade', 'html', reload]);
+        gulp.watch('src/template/**/*.jade', ['jade', 'html', reload]);
 
 
     // Watch image files
-    gulp.watch('app/images/**/*', reload);
+    gulp.watch('src/images/**/*', reload);
 });
 
 // Build
